@@ -17,4 +17,10 @@ authRouter.post("/logout", logout); // http://localhost:3000/api/auth/logout
 
 authRouter.put("/update-profile", protectRoute, updateProfile); // http://localhost:3000/api/auth/update-profile
 
+authRouter.get("/check", protectRoute, (req, res) => {
+  res
+    .status(200)
+    .json({ message: "This is a protected route", user: req.user });
+});
+
 export default authRouter;
