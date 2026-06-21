@@ -1,4 +1,4 @@
-import userModel from "../models/user.model.js";
+import User from "../models/user.model.js";
 import { generateToken } from "../lib/utils.js";
 import cloudinary from "../lib/cloudinary.js";
 import bcrypt from "bcrypt";
@@ -20,14 +20,14 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
-    const user = await userModel.findOne({ email });
+    const user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ message: "User already exists" });
     }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const newUser = new userModel({
+    const newUser = new User({
       fullName,
       email,
       password: hashedPassword,
@@ -59,7 +59,7 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await userModel.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
@@ -102,7 +102,7 @@ export const updateProfile = async (req, res) => {
     }
     const userId = req.user._id;
     const uploadResponse = await cloudinary.uploader.upload(profilePicture);
-    const updatedUser = await userModel.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
       { profilePicture: uploadResponse.secure_url },
       { new: true },
