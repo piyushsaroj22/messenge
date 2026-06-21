@@ -6,12 +6,13 @@ import {
   updateProfile,
 } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
+import { arcjetMiddleware } from "../middlewares/arcjet.middleware.js";
 
 const authRouter = Router();
 
 authRouter.post("/signup", signup); // http://localhost:3000/api/auth/signup
 
-authRouter.post("/login", login); // http://localhost:3000/api/auth/login
+authRouter.post("/login",arcjetMiddleware , login); // http://localhost:3000/api/auth/login
 
 authRouter.post("/logout", logout); // http://localhost:3000/api/auth/logout
 

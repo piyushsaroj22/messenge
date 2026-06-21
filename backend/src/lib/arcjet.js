@@ -4,7 +4,7 @@ import config from "../config/config.js";
 const aj = arcjet({
   key: config.ARCJET_KEY,
   rules: [
-    shield({ mode: "live" }),
+    shield({ mode: "LIVE" }),
     detectBot({
       mode: "LIVE",
       allow: ["CATEGORY:SEARCH_ENGINE"],
