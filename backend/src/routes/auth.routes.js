@@ -1,12 +1,12 @@
-import express from "express";
+import { Router } from "express";
 import { login, logout, signup } from "../controllers/auth.controller.js";
 
-const router = express.Router();
+const authRouter = Router();
 
-router.post("/signup", signup); // http://localhost:3000/api/auth/signup
+authRouter.post("/signup", signup); // http://localhost:3000/api/auth/signup
 
-router.get("/login", login); // http://localhost:3000/api/auth/login
+authRouter.post("/login", login); // http://localhost:3000/api/auth/login
 
-router.get("/logout", logout); // http://localhost:3000/api/auth/logout
+authRouter.post("/logout", logout); // http://localhost:3000/api/auth/logout
 
-export default router;
+export default authRouter;

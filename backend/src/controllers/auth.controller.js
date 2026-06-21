@@ -1,4 +1,4 @@
-import User from "../models/user.model.js";
+import userModel from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../lib/utils.js";
 
@@ -19,32 +19,35 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "Invalid email format" });
     }
 
-    const user = await User.findOne({ email });
+    const user = await userModel.findOne({ email });
     if (user) {
-      return res.status(400).json({ message: "Something Went Wrong" });
+      return res.status(400).json({ message: "User already exists" });
     }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    const newUser = new User({
+    const newUser = new userModel({
       fullName,
       email,
       password: hashedPassword,
     });
 
     if (newUser) {
-      generateToken(newUser._id, res);
+      const token = generateToken(newUser._id, res);
       await newUser.save();
 
       res.status(201).json({
-        _id: newUser._id,
-        fullName: newUser.fullName,
-        email: newUser.email,
-        password: newUser.password,
-        profilePicture: newUser.profilePicture,
+        message: "User registered successfully",
+        user: {
+          _id: newUser._id,
+          fullName: newUser.fullName,
+          email: newUser.email,
+          profilePicture: newUser.profilePicture,
+        },
+        token,
       });
     } else {
-      return res.status(400).json({ message: "Something Went Wrong" });
+      return res.status(400).json({ message: "Failed to create user" });
     }
   } catch (error) {
     console.log("Error in signup:", error);
@@ -54,8 +57,38 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    const token = generateToken(user._id, res);
+    res.status(200).json({
+      message: "Login successful",
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        profilePicture: user.profilePicture,
+      },
+      token,
+    });
+  } catch (error) {
+    console.error("Error in login:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 export const logout = async (req, res) => {
-  res.send("Logout route");
+  res.cookie("token", "", {
+    // httpOnly: true,
+    expires: new Date(0),
+  });
+  res.status(200).json({ message: "Logout successful" });
 };
