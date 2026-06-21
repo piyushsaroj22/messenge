@@ -26,6 +26,7 @@ export const arcjetMiddleware = async (req, res, next) => {
         message: "Malicious bot activity detected.",
       });
     }
+    next();
   } catch (error) {
     console.error("Error in Arcjet middleware:", error);
     res.status(500).json({ message: "Internal Server Error" });
