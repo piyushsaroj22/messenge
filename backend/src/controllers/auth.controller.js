@@ -1,3 +1,5 @@
+import { sendWelcomeEmail } from "../emails/emailHandlers.js";
+import config from "../config/config.js";
 import User from "../models/user.model.js";
 import { generateToken } from "../lib/utils.js";
 import cloudinary from "../lib/cloudinary.js";
@@ -34,8 +36,8 @@ export const signup = async (req, res) => {
     });
 
     if (newUser) {
-      const token = generateToken(newUser._id, res);
-      await newUser.save();
+      const savedUser = await newUser.save();
+      generateToken(newUser._id, res);
 
       res.status(201).json({
         message: "User registered successfully",
@@ -45,10 +47,21 @@ export const signup = async (req, res) => {
           email: newUser.email,
           profilePicture: newUser.profilePicture,
         },
-        token,
+        token: generateToken(newUser._id, res),
       });
+
+      try {
+        await sendWelcomeEmail(
+          savedUser.email,
+          savedUser.fullName,
+          config.CLIENT_URL,
+        );
+      } catch (error) {}
     } else {
-      return res.status(400).json({ message: "Failed to create user" });
+      console.error("Error creating user:", error);
+      // return res
+      //   .status(400)
+      //   .json({ message: "Failed to send welcome email", error });
     }
   } catch (error) {
     console.log("Error in signup:", error);

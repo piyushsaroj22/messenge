@@ -10,7 +10,7 @@ import { arcjetMiddleware } from "../middlewares/arcjet.middleware.js";
 
 const authRouter = Router();
 
-authRouter.use(arcjetMiddleware); // Apply Arcjet middleware to all routes in this router
+// authRouter.use(arcjetMiddleware); // Apply Arcjet middleware to all routes in this router
 
 authRouter.post("/signup", signup); // http://localhost:3000/api/auth/signup
 
