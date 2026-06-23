@@ -1,11 +1,13 @@
-import React from "react";
+import BackgroundColorContainer from "../components/BackgroundColorContainer.jsx";
 import { Loader } from "lucide-react";
 
 const PageLoder = () => {
   return (
-    <div className="flex items-center justify-center h-screen">
-      <Loader className="size-10 animate-spin" />
-    </div>
+    <BackgroundColorContainer>
+      <div className="flex items-center justify-center h-screen">
+        <Loader className="size-10 animate-spin" />
+      </div>
+    </BackgroundColorContainer>
   );
 };
 
