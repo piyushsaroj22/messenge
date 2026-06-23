@@ -99,7 +99,7 @@ const SignupPage = () => {
                         })
                       }
                       className="input"
-                      placeholder="Enter Your Password"
+                      placeholder="Password"
                     />
                   </div>
                 </div>
@@ -111,7 +111,7 @@ const SignupPage = () => {
                   disabled={isSigningUp}
                 >
                   {isSigningUp ? (
-                    <LoaderIcon className="w-full h-5 animate-spin text-center" />
+                    <LoaderIcon className="w-full h-6 animate-spin text-center" />
                   ) : (
                     "Create Account"
                   )}
@@ -123,6 +123,28 @@ const SignupPage = () => {
                 <Link to="/login" className="auth-link">
                   Already have an account? Login
                 </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* FORM ILLUSTRATION - RIGHT SIDE */}
+        <div className="hidden md:w-1/2 md:flex items-center justify-center p-6 bg-gradient-to-bl from-slate-800/20 to-transparent">
+          <div>
+            <img
+              src="/signup.png"
+              alt="People using mobile devices"
+              className="w-full h-auto object-contain"
+            />
+            <div className="mt-6 text-center">
+              <h3 className="text-xl font-medium text-cyan-400">
+                Start Your Journey Today
+              </h3>
+
+              <div className="mt-4 flex justify-center gap-4">
+                <span className="auth-badge">Free</span>
+                <span className="auth-badge">Easy Setup</span>
+                <span className="auth-badge">Private</span>
               </div>
             </div>
           </div>
