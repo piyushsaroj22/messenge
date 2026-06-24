@@ -1,5 +1,4 @@
 import BackgroundColorContainer from "./components/BackgroundColorContainer";
-// import BackgroundBoxContainer from "./components/BackgroundBoxContainer";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 import SignupPage from "./pages/SignupPage";
@@ -17,7 +16,6 @@ const App = () => {
 
   console.log({ authUser });
 
-  // if (isCheckingAuth) return <PageLoder />;
   return (
     <div>
       <BackgroundColorContainer>
