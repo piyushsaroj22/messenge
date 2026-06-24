@@ -37,7 +37,7 @@ export const signup = async (req, res) => {
 
     if (newUser) {
       const savedUser = await newUser.save();
-      generateToken(newUser._id, res);
+      const token = generateToken(newUser._id, res);
 
       res.status(201).json({
         message: "User registered successfully",
@@ -47,7 +47,7 @@ export const signup = async (req, res) => {
           email: newUser.email,
           profilePicture: newUser.profilePicture,
         },
-        token: generateToken(newUser._id, res),
+        token,
       });
 
       try {

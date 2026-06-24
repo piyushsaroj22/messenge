@@ -1,5 +1,6 @@
 // import BorderAnimatedContainer from "../components/BorderAnimatedContainer.jsx";
 import BackgroundBoxContainer from "../components/BackgroundBoxContainer.jsx";
+import { SignUpSkeletonLoadingPage } from "../components/SkeletonLoading.jsx";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -25,6 +26,10 @@ const SignupPage = () => {
     signUp(formData);
   };
 
+  const { isCheckingAuth } = useAuthStore();
+
+  if (isCheckingAuth) return <SignUpSkeletonLoadingPage />;
+
   return (
     <BackgroundBoxContainer>
       <div className="w-full flex flex-col md:flex-row">
@@ -34,6 +39,7 @@ const SignupPage = () => {
             {/* Heading text */}
             <div className="text-center mb-8">
               <MessageCircleIcon className="w-12 h-12 mx-auto text-slate-400 mb-4" />
+
               <h2 className="text-2xl font-bold text-slate-200 mb-2">
                 Create Account
               </h2>

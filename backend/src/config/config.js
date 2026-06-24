@@ -68,6 +68,10 @@ if (!process.env.CLIENT_URL) {
   throw new Error("CLIENT_URL is not defined in the environment variables");
 }
 
+if (!process.env.CLIENT_URL_2) {
+  throw new Error("CLIENT_URL_2 is not defined in the environment variables");
+}
+
 const config = {
   MONGO_URI: process.env.MONGO_URI,
   PORT: process.env.PORT,
@@ -82,6 +86,7 @@ const config = {
   EMAIL_FROM: process.env.EMAIL_FROM,
   EMAIL_FROM_NAME: process.env.EMAIL_FROM_NAME,
   CLIENT_URL: process.env.CLIENT_URL,
+  CLIENT_URL_2: process.env.CLIENT_URL_2,
 };
 
 export default config;

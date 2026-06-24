@@ -1,7 +1,6 @@
 import BackgroundColorContainer from "./components/BackgroundColorContainer";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
-import PageLoder from "./components/PageLoder.jsx";
 import SignupPage from "./pages/SignupPage";
 import { Toaster } from "react-hot-toast";
 import LoginPage from "./pages/LoginPage";
@@ -9,7 +8,7 @@ import ChatPage from "./pages/ChatPage";
 import { useEffect } from "react";
 
 const App = () => {
-  const { checkAuth, isCheckingAuth, authUser } = useAuthStore();
+  const { checkAuth, authUser } = useAuthStore();
 
   useEffect(() => {
     checkAuth();
@@ -17,7 +16,7 @@ const App = () => {
 
   console.log({ authUser });
 
-  if (isCheckingAuth) return <PageLoder />;
+  // if (isCheckingAuth) return <PageLoder />;
   return (
     <div>
       <BackgroundColorContainer>
