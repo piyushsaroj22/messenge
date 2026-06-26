@@ -31,12 +31,12 @@ const ChatsList = () => {
             >
               <div className="size-12 rounded-full">
                 <img
-                  src={chat.profilePic || "/avatar.png"}
+                  src={chat.profilePicture || "/avatar.png"}
                   alt={chat.fullName}
                 />
               </div>
             </div>
-            <h4 className="text-slate-200 font-medium truncate">
+            <h4 className="text-slate-200 font-medium text-xl truncate">
               {chat.fullName}
             </h4>
           </div>
