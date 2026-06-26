@@ -1,31 +1,35 @@
-import ActiveTabSwitch from "../components/ActiveTabSwitch.jsx";
-import ChatContainer from "../components/ChatContainer.jsx";
-import ChatsList from "../components/ChatsList.jsx";
-import ContactList from "../components/ContactList.jsx";
-import NoConversationPlaceholder from "../components/NoConversationPlaceholder.jsx";
-import ProfileHeader from "../components/ProfileHeader.jsx";
-import { useChatStore } from "../store/useChatStore.js";
+import { useChatStore } from "../store/useChatStore";
 
-const ChatPage = () => {
+import NoConversationPlaceholder from "../components/NoConversationPlaceholder";
+import BorderAnimatedContainer from "../components/BorderAnimatedContainer";
+import ProfileHeader from "../components/ProfileHeader";
+import ActiveTabSwitch from "../components/ActiveTabSwitch";
+import ChatsList from "../components/ChatsList";
+import ContactList from "../components/ContactList";
+import ChatContainer from "../components/ChatContainer";
+
+function ChatPage() {
   const { activeTab, selectedUser } = useChatStore();
+
   return (
-    <div className="z-2">
-      {/* LEFT SIDE */}
-      <div className="w-80 bg-slate-800/50 backdrop-blur-sm flex flex-col">
-        <ProfileHeader />
-        <ActiveTabSwitch />
+    <div className="relative w-full max-w-6xl h-[800px] z-2">
+      <BorderAnimatedContainer>
+        {/* LEFT SIDE */}
+        <div className="w-80 flex flex-col">
+          <ProfileHeader />
+          <ActiveTabSwitch />
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
-          {activeTab === "chats" ? <ChatsList /> : <ContactList />}
+          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+            {activeTab === "chats" ? <ChatsList /> : <ContactList />}
+          </div>
         </div>
-      </div>
 
-      {/* RIGHT SIDE */}
-      <div className="flex-1 flex flex-col bg-slate-900/50 backdrop-blur-sm">
-        {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
-      </div>
+        {/* RIGHT SIDE */}
+        <div className="flex-1 flex flex-col bg-slate-900/50 backdrop-blur-sm">
+          {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
+        </div>
+      </BorderAnimatedContainer>
     </div>
   );
-};
-
+}
 export default ChatPage;

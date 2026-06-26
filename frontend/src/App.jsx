@@ -8,13 +8,13 @@ import ChatPage from "./pages/ChatPage";
 import { useEffect } from "react";
 
 const App = () => {
-  const { checkAuth, authUser } = useAuthStore();
+  const { checkAuth, authUser, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  console.log({ authUser });
+  // console.log({ authUser });
 
   return (
     <div>
@@ -22,7 +22,13 @@ const App = () => {
         <Routes>
           <Route
             path="/"
-            element={authUser ? <ChatPage /> : <Navigate to={"/login"} />}
+            element={
+              isCheckingAuth ? null : authUser ? (
+                <ChatPage />
+              ) : (
+                <Navigate to={"/login"} />
+              )
+            }
           />
           <Route
             path="/signup"
