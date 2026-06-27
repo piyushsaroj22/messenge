@@ -147,6 +147,17 @@ export const UsersLoadingSkeleton = () => {
   );
 };
 
-// export const MessagesLoadingSkeleton = () => {
-//   return ();
-// };
+export const MessagesLoadingSkeleton = () => {
+  return (
+    <div className="max-w-3xl mx-auto space-y-4">
+      {[...Array(18)].map((_, index) => (
+        <div
+          key={index}
+          className={`chat ${index % 2 === 0 ? "chat-start" : "chat-end"} animate-pulse`}
+        >
+          <div className={`chat-bubble bg-slate-800 text-white w-32`}></div>
+        </div>
+      ))}
+    </div>
+  );
+};

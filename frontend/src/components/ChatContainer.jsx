@@ -1,11 +1,14 @@
-import { useEffect } from "react";
+import NoChatHistoryPlaceholder from "./NoChatHistoryPlaceholder";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
+import MessageInput from "./MessageInput";
 import ChatHeader from "./ChatHeader";
-import NoChatHistoryPlaceholder from "./NoChatHistoryPlaceholder";
+import { useEffect } from "react";
+import { MessagesLoadingSkeleton } from "./SkeletonLoading";
 
 const ChatContainer = () => {
-  const { selectedUser, getMessagesByUserId, messages } = useChatStore();
+  const { selectedUser, getMessagesByUserId, messages, isMessagesLoading } =
+    useChatStore();
   const { authUser } = useAuthStore();
 
   useEffect(() => {
@@ -16,7 +19,7 @@ const ChatContainer = () => {
     <>
       <ChatHeader />
       <div className="flex-1 px-6 overflow-y-auto py-8">
-        {messages.length > 0 ? (
+        {messages.length > 0 && !isMessagesLoading ? (
           <div className="max-w-3xl mx-auto space-y-1">
             {messages.map((msg) => (
               <div
@@ -34,7 +37,7 @@ const ChatContainer = () => {
                     <img
                       src={msg.image}
                       alt="Shared"
-                      className="rounded-lg h-48 object-cover"
+                      className="w-full h-full mt-3 object-cover rounded-lg"
                     />
                   )}
                   {msg.text && <p className="mt-2">{msg.text}</p>}
@@ -52,10 +55,13 @@ const ChatContainer = () => {
             {/* 👇 scroll target */}
             {/* <div ref={messageEndRef} /> */}
           </div>
+        ) : isMessagesLoading ? (
+          <MessagesLoadingSkeleton />
         ) : (
           <NoChatHistoryPlaceholder name={selectedUser.fullName} />
         )}
       </div>
+      <MessageInput />
     </>
   );
 };
