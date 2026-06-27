@@ -26,7 +26,7 @@ const ChatsList = () => {
         >
           <div className="flex items-center gap-3">
             <div
-              className={`avatar avatar-online ${onlineUsers.includes(chat._id) ? "online" : "offline"}`}
+              className={`avatar ${onlineUsers.includes(chat._id) ? "avatar-online" : "avatar-offline"}`}
               // ${onlineUsers.includes(chat._id) ? "online" : "offline"} isko baad me iske uper wale line pe dalna hai
             >
               <div className="size-12 rounded-full">
