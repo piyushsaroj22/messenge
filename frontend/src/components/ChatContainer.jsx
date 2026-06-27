@@ -37,7 +37,7 @@ const ChatContainer = () => {
                     <img
                       src={msg.image}
                       alt="Shared"
-                      className="w-full h-full mt-3 object-cover rounded-lg"
+                      className="w-full h-84 mt-3 object-cover rounded-lg"
                     />
                   )}
                   {msg.text && <p className="mt-2">{msg.text}</p>}

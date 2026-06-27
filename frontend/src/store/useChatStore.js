@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import { toast } from "react-hot-toast";
+import { useAuthStore } from "./useAuthStore.js";
 
 export const useChatStore = create((set, get) => ({
   allContacts: [],
@@ -61,6 +62,24 @@ export const useChatStore = create((set, get) => ({
       toast.error(error.response?.data?.message || "Messages Fetching failed");
     } finally {
       set({ isMessagesLoading: false });
+    }
+  },
+
+  sendMessage: async (messageData) => {
+    const { selectedUser, messages } = get();
+    const { authUser } = useAuthStore.getState();
+
+    try {
+      const res = await axiosInstance.post(
+        `/messages/send/${selectedUser._id}`,
+        messageData,
+      );
+      set({
+        messages: [...messages, res.data.newMessage],
+      });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error(error.response?.data?.message || "Message sending failed");
     }
   },
 }));
