@@ -4,6 +4,7 @@ import messageRoutes from "./routes/message.routes.js";
 import cookieParser from "cookie-parser";
 import config from "./config/config.js";
 import cors from "cors";
+// import { app } from "./lib/socket.js";
 
 const app = express();
 
