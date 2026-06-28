@@ -41,7 +41,9 @@ const ChatHeader = () => {
           <h3 className="text-slate-200 font-medium text-xl truncate">
             {selectedUser.fullName}
           </h3>
-          <p className="text-slate-400 text-xs ">
+          <p
+            className={`text-xs ${isOnline ? "text-green-400" : "text-slate-400"}`}
+          >
             {isOnline ? "Online" : "Offline"}
           </p>
         </div>

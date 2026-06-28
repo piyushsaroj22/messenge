@@ -24,7 +24,7 @@ const ContactList = () => {
         >
           <div className="flex items-center gap-3">
             <div
-              className={`avatar avatar-online ${onlineUsers.includes(contact._id) ? "online" : "offline"}`}
+              className={`avatar ${onlineUsers.includes(contact._id) ? "avatar-online" : "avatar-offline"}`}
             >
               <div className="size-12 rounded-full">
                 <img src={contact.profilePicture || "/avatar.png"} />
