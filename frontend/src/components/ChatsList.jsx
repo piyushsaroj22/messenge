@@ -5,20 +5,29 @@ import NoChatsFound from "./NoChatsFound.jsx";
 import { useEffect } from "react";
 
 const ChatsList = () => {
-  const { getMyChatPartners, chats, isUsersLoading, setSelectedUser } =
-    useChatStore();
+  const {
+    getMyChatPartners,
+    chats,
+    isUsersLoading,
+    setSelectedUser,
+    searchQuery,
+  } = useChatStore();
   const { onlineUsers } = useAuthStore();
 
   useEffect(() => {
     getMyChatPartners();
   }, [getMyChatPartners]);
 
+  const filteredChats = chats.filter((chat) =>
+    chat.fullName.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   if (isUsersLoading) return <UsersLoadingSkeleton />;
-  if (chats.length === 0) return <NoChatsFound />;
+  if (filteredChats.length === 0) return <NoChatsFound />;
 
   return (
     <>
-      {chats.map((chat) => (
+      {filteredChats.map((chat) => (
         <div
           key={chat._id}
           className="p-4 cursor-pointer border-b border-slate-700/50" // bg-cyan-500/5  hover:bg-cyan-500/20 transition-colors duration-200 ease-in-out
@@ -36,9 +45,16 @@ const ChatsList = () => {
                 />
               </div>
             </div>
-            <h4 className="text-slate-200 font-medium text-xl truncate">
-              {chat.fullName}
-            </h4>
+            <div className="flex flex-col">
+              <h4 className="text-slate-200 font-medium text-xl truncate">
+                {chat.fullName}
+              </h4>
+              <p
+                className={`text-[12px] ${onlineUsers.includes(chat._id) ? "text-green-400" : "text-slate-400"}`}
+              >
+                {onlineUsers.includes(chat._id) ? "Online" : "Offline"}
+              </p>
+            </div>
           </div>
         </div>
       ))}
