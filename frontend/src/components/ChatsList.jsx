@@ -2,6 +2,7 @@ import { UsersLoadingSkeleton } from "./SkeletonLoading.jsx";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { useChatStore } from "../store/useChatStore.js";
 import NoChatsFound from "./NoChatsFound.jsx";
+import NoResultsFound from "./NoResultsFound.jsx";
 import { useEffect } from "react";
 
 const ChatsList = () => {
@@ -23,41 +24,47 @@ const ChatsList = () => {
   );
 
   if (isUsersLoading) return <UsersLoadingSkeleton />;
-  if (filteredChats.length === 0) return <NoChatsFound />;
+  // if (filteredChats.length === 0) return <NoChatsFound />;
 
   return (
     <>
-      {filteredChats.map((chat) => (
-        <div
-          key={chat._id}
-          className="p-4 cursor-pointer border-b border-slate-700/50" // bg-cyan-500/5  hover:bg-cyan-500/20 transition-colors duration-200 ease-in-out
-          onClick={() => setSelectedUser(chat)}
-        >
-          <div className="flex items-center gap-3">
-            <div
-              className={`avatar ${onlineUsers.includes(chat._id) ? "avatar-online" : "avatar-offline"}`}
-              // ${onlineUsers.includes(chat._id) ? "online" : "offline"} isko baad me iske uper wale line pe dalna hai
-            >
-              <div className="size-12 rounded-full">
-                <img
-                  src={chat.profilePicture || "/avatar.png"}
-                  alt={chat.fullName}
-                />
+      {filteredChats.length > 0 ? (
+        filteredChats.map((chat) => (
+          <div
+            key={chat._id}
+            className="p-4 cursor-pointer border-b border-slate-700/50" // bg-cyan-500/5  hover:bg-cyan-500/20 transition-colors duration-200 ease-in-out
+            onClick={() => setSelectedUser(chat)}
+          >
+            <div className="flex items-center gap-3">
+              <div
+                className={`avatar ${onlineUsers.includes(chat._id) ? "avatar-online" : "avatar-offline"}`}
+                // ${onlineUsers.includes(chat._id) ? "online" : "offline"} isko baad me iske uper wale line pe dalna hai
+              >
+                <div className="size-12 rounded-full">
+                  <img
+                    src={chat.profilePicture || "/avatar.png"}
+                    alt={chat.fullName}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <h4 className="text-slate-200 font-medium text-xl truncate">
+                  {chat.fullName}
+                </h4>
+                <p
+                  className={`text-[12px] ${onlineUsers.includes(chat._id) ? "text-green-400" : "text-slate-400"}`}
+                >
+                  {onlineUsers.includes(chat._id) ? "Online" : "Offline"}
+                </p>
               </div>
             </div>
-            <div className="flex flex-col">
-              <h4 className="text-slate-200 font-medium text-xl truncate">
-                {chat.fullName}
-              </h4>
-              <p
-                className={`text-[12px] ${onlineUsers.includes(chat._id) ? "text-green-400" : "text-slate-400"}`}
-              >
-                {onlineUsers.includes(chat._id) ? "Online" : "Offline"}
-              </p>
-            </div>
           </div>
-        </div>
-      ))}
+        ))
+      ) : searchQuery.trim() !== "" ? (
+        <NoResultsFound />
+      ) : (
+        <NoChatsFound />
+      )}
     </>
   );
 };
