@@ -222,7 +222,9 @@ export const useChatStore = create((set, get) => ({
       });
 
       // Play notification sound
-      if (isSoundEnabled) {
+      const isIncomingMessage = newMessage.receiverId === authUser._id;
+
+      if (isSoundEnabled && isIncomingMessage) {
         const notificationSound = new Audio("/sounds/apple_ting.mp3");
         notificationSound.currentTime = 0;
         notificationSound.play().catch((err) => {
