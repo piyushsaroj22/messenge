@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 // import express from "express";
 import http from "http";
 import app from "../app.js";
+import Message from "../models/message.model.js";
 
 // const app = express();
 const server = http.createServer(app);
@@ -23,11 +24,30 @@ export const getReceiverSocketId = (userId) => {
 // this is for storig online users
 const userSocketMap = {}; // {userId:socketId}
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
   console.log(`User connected: ${socket.user.fullName} (${socket.userId})`);
 
   const userId = socket.userId;
   userSocketMap[userId] = socket.id;
+
+  // Find all messages that were sent while this user was offline
+  const pendingMessages = await Message.find({
+    receiverId: userId,
+    status: "sent",
+  });
+
+  for (const message of pendingMessages) {
+    message.status = "delivered";
+    await message.save();
+
+    const senderSocketId = getReceiverSocketId(message.senderId.toString());
+
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("messageDelivered", {
+        clientId: message.clientId,
+      });
+    }
+  }
 
   // io.emit() is used to send events to all connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));

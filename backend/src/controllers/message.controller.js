@@ -2,6 +2,7 @@ import { getReceiverSocketId, io } from "../lib/socket.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 import cloudinary from "../lib/cloudinary.js";
+import messageService from "../services/message.service.js";
 
 export const getAllContacts = async (req, res) => {
   try {
@@ -18,27 +19,11 @@ export const getAllContacts = async (req, res) => {
 
 export const getChatPartners = async (req, res) => {
   try {
-    const loggedInUserId = req.user._id;
+    const chatList = await messageService.getChatList(req.user._id);
 
-    const messages = await Message.find({
-      $or: [{ senderId: loggedInUserId }, { receiverId: loggedInUserId }],
+    res.status(200).json({
+      chatPartners: chatList,
     });
-
-    const chatPartnerIds = [
-      ...new Set(
-        messages.map((msg) =>
-          msg.senderId.toString() === loggedInUserId.toString()
-            ? msg.receiverId.toString()
-            : msg.senderId.toString(),
-        ),
-      ),
-    ];
-
-    const chatPartners = await User.find({
-      _id: { $in: chatPartnerIds },
-    }).select("-password");
-
-    res.status(200).json({ chatPartners });
   } catch (error) {
     console.error("Error fetching chat partners:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -65,47 +50,134 @@ export const getMessageByUserId = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { image, text } = req.body;
+    const { text, image, clientId } = req.body;
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
 
+    // Validation
     if (!text && !image) {
-      return res.status(400).json({ message: "Text or image is required." });
-    }
-    if (senderId.equals(receiverId)) {
-      return res
-        .status(400)
-        .json({ message: "Cannot send messages to yourself." });
-    }
-    const receiverExists = await User.exists({ _id: receiverId });
-    if (!receiverExists) {
-      return res.status(404).json({ message: "Receiver not found." });
+      return res.status(400).json({
+        message: "Text or image is required.",
+      });
     }
 
-    let imageUrl;
+    if (senderId.equals(receiverId)) {
+      return res.status(400).json({
+        message: "Cannot send messages to yourself.",
+      });
+    }
+
+    const receiverExists = await User.exists({
+      _id: receiverId,
+    });
+
+    if (!receiverExists) {
+      return res.status(404).json({
+        message: "Receiver not found.",
+      });
+    }
+
+    // Upload image if exists
+    let imageUrl = "";
+
     if (image) {
       const uploadResponse = await cloudinary.uploader.upload(image);
       imageUrl = uploadResponse.secure_url;
     }
 
-    const newMessage = new Message({
+    // Create message
+    const newMessage = await Message.create({
       senderId,
       receiverId,
       text,
       image: imageUrl,
+      status: "sent",
+      clientId,
     });
 
-    await newMessage.save();
-
-    //todo: send real-time notification to receiver using socket.io
+    // Receiver online?
     const receiverSocketId = getReceiverSocketId(receiverId);
+
     if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newMessage", newMessage);
+      newMessage.status = "delivered";
+      await newMessage.save();
     }
 
-    res.status(201).json({ message: "Message sent successfully", newMessage });
+    // Fresh message from DB
+    const message = await Message.findById(newMessage._id);
+
+    // Receiver ko realtime message
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", message);
+    }
+
+    // Sender ko realtime message
+    const senderSocketId = getReceiverSocketId(senderId);
+
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("newMessage", message);
+    }
+
+    // Sender ko delivered status
+    if (receiverSocketId && senderSocketId) {
+      io.to(senderSocketId).emit("messageDelivered", {
+        clientId,
+      });
+    }
+
+    // Response
+    return res.status(201).json({
+      message: "Message sent successfully",
+      newMessage: message,
+    });
   } catch (error) {
     console.error("Error sending message:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+
+    return res.status(500).json({
+      message: "Internal Server Error",
+    });
   }
 };
+
+export const markMessagesAsSeen = async (req, res) => {
+  try {
+    const myId = req.user._id;
+    const { id: senderId } = req.params;
+
+    await Message.updateMany(
+      {
+        senderId,
+        receiverId: myId,
+        status: { $ne: "seen" }, // Jo messages abhi seen nahi hue
+      },
+      {
+        $set: {
+          status: "seen",
+        },
+      },
+    );
+
+    const updatedMessages = await Message.find({
+      senderId,
+      receiverId: myId,
+      status: "seen",
+    }).select("_id");
+
+    const senderSocketId = getReceiverSocketId(senderId);
+
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("messagesSeen", {
+        messageIds: updatedMessages.map((msg) => msg._id.toString()),
+      });
+    }
+
+    res.status(200).json({
+      message: "Messages marked as seen",
+    });
+  } catch (error) {
+    console.error("Error marking messages as seen:", error);
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+}; //=====================================================Newly Added Function=====================================================

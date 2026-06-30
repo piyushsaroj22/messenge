@@ -5,6 +5,7 @@ import MessageInput from "./MessageInput";
 import ChatHeader from "./ChatHeader";
 import { useEffect, useRef } from "react";
 import { MessagesLoadingSkeleton } from "./SkeletonLoading";
+import { CheckCheckIcon, CheckIcon } from "lucide-react";
 
 const ChatContainer = () => {
   const {
@@ -12,26 +13,15 @@ const ChatContainer = () => {
     getMessagesByUserId,
     messages,
     isMessagesLoading,
-    subscribeToMessages,
-    unsubscribeFromMessages,
+    markMessagesAsSeen,
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
 
   useEffect(() => {
     getMessagesByUserId(selectedUser._id);
-    subscribeToMessages();
-
-    //clean Up
-    return () => {
-      unsubscribeFromMessages();
-    };
-  }, [
-    selectedUser,
-    getMessagesByUserId,
-    subscribeToMessages,
-    unsubscribeFromMessages,
-  ]);
+    markMessagesAsSeen(selectedUser._id);
+  }, [selectedUser, getMessagesByUserId, markMessagesAsSeen]);
 
   useEffect(() => {
     if (messageEndRef.current) {
@@ -51,7 +41,7 @@ const ChatContainer = () => {
                 className={`chat ${msg.senderId === authUser._id ? "chat-end" : "chat-start"}`}
               >
                 <div
-                  className={`chat-bubble  relative break-words overflow-wrap-anywhere ${
+                  className={`chat-bubble  relative wrap-break-word overflow-wrap-anywhere ${
                     msg.senderId === authUser._id
                       ? "bg-cyan-600 text-white rounded-t-2xl rounded-l-2xl pt-0 border border-cyan-700/50 font-medium"
                       : "bg-slate-800 text-slate-200 rounded-t-2xl rounded-r-2xl pt-0 border border-slate-700/50 font-medium"
@@ -65,14 +55,34 @@ const ChatContainer = () => {
                     />
                   )}
                   {msg.text && <p className="mt-2">{msg.text}</p>}
-                  <p
-                    className={`text-[0.70rem] mt-1 opacity-75 flex items-center gap-1 ${msg.senderId === authUser._id ? "justify-end" : "justify-start"}`}
-                  >
-                    {new Date(msg.createdAt).toLocaleTimeString(undefined, {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p
+                      className={`text-[0.70rem] mt-1 opacity-75 flex items-center gap-1 ${msg.senderId === authUser._id ? "justify-end" : "justify-start"}`}
+                    >
+                      {new Date(msg.createdAt).toLocaleTimeString(undefined, {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                    {msg.senderId === authUser._id && (
+                      <>
+                        {msg.status === "sent" && (
+                          <CheckIcon size={15} className="text-slate-300" />
+                        )}
+
+                        {msg.status === "delivered" && (
+                          <CheckCheckIcon
+                            size={15}
+                            className="text-slate-300"
+                          />
+                        )}
+
+                        {msg.status === "seen" && (
+                          <CheckCheckIcon size={15} className="text-sky-400" />
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

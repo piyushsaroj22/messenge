@@ -8,12 +8,26 @@ import ChatsList from "../components/ChatsList";
 import ContactList from "../components/ContactList";
 import ChatContainer from "../components/ChatContainer";
 import ProfileSearchBar from "../components/ProfileSearchBar";
+import { useEffect } from "react";
 
 function ChatPage() {
-  const { activeTab, selectedUser } = useChatStore();
+  const {
+    activeTab,
+    selectedUser,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  } = useChatStore();
+
+  useEffect(() => {
+    subscribeToMessages();
+
+    return () => {
+      unsubscribeFromMessages();
+    };
+  }, [subscribeToMessages, unsubscribeFromMessages]);
 
   return (
-    <div className="relative w-full max-w-6xl h-[800px] z-2 items-center justify-center">
+    <div className="relative w-full max-w-6xl h-200 z-2 items-center justify-center">
       <BorderAnimatedContainer>
         {/* LEFT SIDE */}
         <div className="w-full md:w-1/3 flex flex-col ">

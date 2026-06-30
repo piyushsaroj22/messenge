@@ -27,7 +27,7 @@ const ChatHeader = () => {
     >
       <div className="flex items-center space-x-3">
         <div
-          className={`avatar ${isOnline ? "avatar-online" : "avatar-offline"}`} // ${isOnline ? "online" : "offline"}
+          className={`avatar ${isOnline ? "avatar-online border-2 rounded-full border-green-500" : "avatar-offline border-2 rounded-full border-slate-700/50"}`} // ${isOnline ? "online" : "offline"}
         >
           <div className="w-12 rounded-full">
             <img

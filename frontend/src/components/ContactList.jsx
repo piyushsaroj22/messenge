@@ -37,7 +37,7 @@ const ContactList = () => {
           >
             <div className="flex items-center gap-3">
               <div
-                className={`avatar ${onlineUsers.includes(contact._id) ? "avatar-online" : "avatar-offline"}`}
+                className={`avatar ${onlineUsers.includes(contact._id) ? "avatar-online border-2 rounded-full border-green-500" : "avatar-offline border-2 rounded-full border-slate-700/50"}`}
               >
                 <div className="size-12 rounded-full">
                   <img src={contact.profilePicture || "/avatar.png"} />
@@ -47,11 +47,11 @@ const ContactList = () => {
                 <h4 className="text-slate-200 font-medium">
                   {contact.fullName}
                 </h4>
-                <p
-                  className={`text-[12px] ${onlineUsers.includes(contact._id) ? "text-green-400" : "text-slate-400"}`}
+                {/* <p
+                  className={`text-[12px] ${onlineUsers.includes(contact._id) ? "text-green-400" : "text-slate-400"}`}         ======================================================================baad me update karna hoga to karunga
                 >
                   {onlineUsers.includes(contact._id) ? "Online" : "Offline"}
-                </p>
+                </p> */}
               </div>
             </div>
           </div>
