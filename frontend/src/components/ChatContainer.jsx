@@ -14,6 +14,7 @@ const ChatContainer = () => {
     messages,
     isMessagesLoading,
     markMessagesAsSeen,
+    typingUsers,
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
@@ -27,7 +28,7 @@ const ChatContainer = () => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, typingUsers]);
 
   return (
     <>
@@ -86,6 +87,25 @@ const ChatContainer = () => {
                 </div>
               </div>
             ))}
+
+            {typingUsers[selectedUser._id] && (
+              <div className="chat chat-start">
+                <div className="chat-bubble bg-slate-800 border border-slate-700 rounded-t-2xl rounded-r-2xl px-4 py-3">
+                  <div className="flex items-center gap-1 mt-1">
+                    <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce"></span>
+                    <span
+                      className="w-2 h-2 bg-slate-300 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.15s" }}
+                    ></span>
+                    <span
+                      className="w-2 h-2 bg-slate-300 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.3s" }}
+                    ></span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* 👇 scroll target */}
             <div ref={messageEndRef} />
           </div>

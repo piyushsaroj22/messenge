@@ -7,6 +7,7 @@ export const useChatStore = create((set, get) => ({
   allContacts: [],
   chats: [],
   messages: [],
+  typingUsers: {},
   activeTab: "chats",
   selectedUser: null,
   isUsersLoading: false,
@@ -79,6 +80,15 @@ export const useChatStore = create((set, get) => ({
         messages: updatedMessages,
       };
     });
+  },
+
+  setTypingUser: (userId, isTyping) => {
+    set((state) => ({
+      typingUsers: {
+        ...state.typingUsers,
+        [userId]: isTyping,
+      },
+    }));
   },
 
   toggleSound: () => {
@@ -190,6 +200,8 @@ export const useChatStore = create((set, get) => ({
     socket.off("newMessage");
     socket.off("messageDelivered");
     socket.off("messagesSeen");
+    socket.off("userTyping");
+    socket.off("userStoppedTyping");
 
     socket.on("newMessage", (newMessage) => {
       const { selectedUser, isSoundEnabled } = get();
@@ -250,6 +262,14 @@ export const useChatStore = create((set, get) => ({
         ),
       }));
     });
+
+    socket.on("userTyping", ({ senderId }) => {
+      get().setTypingUser(senderId, true);
+    });
+
+    socket.on("userStoppedTyping", ({ senderId }) => {
+      get().setTypingUser(senderId, false);
+    });
   },
 
   unsubscribeFromMessages: () => {
@@ -257,6 +277,8 @@ export const useChatStore = create((set, get) => ({
     socket.off("newMessage");
     socket.off("messageDelivered");
     socket.off("messagesSeen");
+    socket.off("userTyping");
+    socket.off("userStoppedTyping");
   },
 
   setSearchQuery: (query) => {

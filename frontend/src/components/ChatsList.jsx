@@ -12,6 +12,7 @@ const ChatsList = () => {
     isUsersLoading,
     setSelectedUser,
     searchQuery,
+    typingUsers,
   } = useChatStore();
   const { onlineUsers } = useAuthStore();
 
@@ -32,7 +33,7 @@ const ChatsList = () => {
         filteredChats.map((chat) => (
           <div
             key={chat._id}
-            className="p-4 cursor-pointer border-b border-slate-700/50 hover:bg-slate-800/50 transition-all duration-200 rounded-xl" // bg-cyan-500/5  hover:bg-cyan-500/20 transition-colors duration-200 ease-in-out
+            className="p-3 cursor-pointer border-b border-slate-700/50 hover:bg-slate-800/50 transition-all duration-200 rounded-xl" // bg-cyan-500/5  hover:bg-cyan-500/20 transition-colors duration-200 ease-in-out
             onClick={() => setSelectedUser(chat)}
           >
             <div className="flex items-center gap-3">
@@ -67,12 +68,20 @@ const ChatsList = () => {
                 </div>
 
                 <div className="flex justify-between items-center mt-1">
-                  <p className="text-sm text-slate-400 truncate max-w-[180px]">
-                    {chat.lastMessage
-                      ? chat.lastMessage.image
-                        ? "📷 Photo"
-                        : chat.lastMessage.text
-                      : "No messages yet"}
+                  <p
+                    className={`text-sm truncate max-w-[180px] ${
+                      typingUsers[chat._id]
+                        ? "text-cyan-400 italic"
+                        : "text-slate-400"
+                    }`}
+                  >
+                    {typingUsers[chat._id]
+                      ? "Typing..."
+                      : chat.lastMessage
+                        ? chat.lastMessage.image
+                          ? "📷 Photo"
+                          : chat.lastMessage.text
+                        : "No messages yet"}
                   </p>
 
                   {chat.unreadCount > 0 && (

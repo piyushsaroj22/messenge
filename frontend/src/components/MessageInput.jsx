@@ -3,6 +3,7 @@ import useKeyboardSound from "../hooks/useKeyboardSound";
 import { useChatStore } from "../store/useChatStore";
 import { ImageIcon, SendIcon, XIcon } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useAuthStore } from "../store/useAuthStore";
 
 const MessageInput = () => {
   const { playRandomKeyStrokeSound } = useKeyboardSound();
@@ -13,17 +14,51 @@ const MessageInput = () => {
 
   const fileInputRef = useRef(null);
 
-  const { sendMessage, isSoundEnabled } = useChatStore();
+  // const { sendMessage, isSoundEnabled } = useChatStore();
 
-  const handleSendMessage = (e) => {
+  const { sendMessage, isSoundEnabled, selectedUser } = useChatStore();
+  const { socket } = useAuthStore();
+
+  const typingTimeoutRef = useRef(null);
+
+  const handleTyping = (value) => {
+    setText(value);
+
+    if (isSoundEnabled) {
+      playRandomKeyStrokeSound();
+    }
+
+    if (!socket || !selectedUser) return;
+
+    socket.emit("typing", {
+      receiverId: selectedUser._id,
+    });
+
+    clearTimeout(typingTimeoutRef.current);
+
+    typingTimeoutRef.current = setTimeout(() => {
+      socket.emit("stopTyping", {
+        receiverId: selectedUser._id,
+      });
+    }, 1000); // 1 seconds of inactivity
+  };
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!text.trim() && !imagePreview) return;
     if (isSoundEnabled) {
       playRandomKeyStrokeSound();
     }
-    sendMessage({ text: text.trim(), image: imagePreview });
+    await sendMessage({ text: text.trim(), image: imagePreview });
+
+    socket?.emit("stopTyping", {
+      receiverId: selectedUser._id,
+    });
+
+    clearTimeout(typingTimeoutRef.current);
+
     setText("");
-    setImagePreview("");
+    setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -74,8 +109,7 @@ const MessageInput = () => {
           type="text"
           value={text}
           onChange={(e) => {
-            setText(e.target.value);
-            isSoundEnabled && playRandomKeyStrokeSound();
+            handleTyping(e.target.value);
           }}
           className="flex-1 bg-slate-800/50 border border-slate-700/50 rounded-lg py-2 px-4"
           placeholder="Type your message..."
