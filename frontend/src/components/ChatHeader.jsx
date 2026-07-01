@@ -4,7 +4,8 @@ import { XIcon } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser } = useChatStore();
+  const { selectedUser, users, setSelectedUser } = useChatStore();
+  const currentUser = users[selectedUser._id] || selectedUser;
 
   const { onlineUsers } = useAuthStore();
   const isOnline = onlineUsers.includes(selectedUser._id);
@@ -31,15 +32,15 @@ const ChatHeader = () => {
         >
           <div className="w-12 rounded-full">
             <img
-              src={selectedUser.profilePicture || "/avatar.png"}
-              alt={selectedUser.fullName}
+              src={currentUser.profilePicture || "/avatar.png"}
+              alt={currentUser.fullName}
             />
           </div>
         </div>
 
         <div className="flex flex-col">
           <h3 className="text-slate-200 font-medium text-xl truncate">
-            {selectedUser.fullName}
+            {currentUser.fullName}
           </h3>
           <p
             className={`text-xs ${isOnline ? "text-green-400" : "text-slate-400"}`}

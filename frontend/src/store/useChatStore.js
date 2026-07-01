@@ -6,14 +6,28 @@ import { useAuthStore } from "./useAuthStore.js";
 export const useChatStore = create((set, get) => ({
   allContacts: [],
   chats: [],
+  users: {}, // ⭐ NEW
   messages: [],
   typingUsers: {},
   activeTab: "chats",
+  // selectedUserId: null,
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
   searchQuery: "",
   isSoundEnabled: localStorage.getItem("isSoundEnabled") === "true",
+
+  updateUserCache: (user) => {
+    set((state) => ({
+      users: {
+        ...state.users,
+        [user._id]: {
+          ...(state.users[user._id] || {}),
+          ...user,
+        },
+      },
+    }));
+  },
 
   updateChatPreview: ({ message, unreadCountMode = "preserve" }) => {
     set((state) => {
@@ -100,15 +114,39 @@ export const useChatStore = create((set, get) => ({
     set({ activeTab: tab });
   },
 
+  // setSelectedUser: (user) => {
+  //   set({
+  //     selectedUserId: user?._id || null,
+  //   });
+  // },
+
   setSelectedUser: (selectedUser) => {
     set({ selectedUser });
   },
+
+  // getSelectedUser: () => {
+  //   const { selectedUserId, users } = get();
+
+  //   if (!selectedUserId) return null;
+
+  //   return users[selectedUserId] || null;
+  // },
 
   getAllContacts: async () => {
     set({ isUsersLoading: true });
     try {
       const res = await axiosInstance.get("/messages/contacts");
-      set({ allContacts: res.data.contacts });
+      const users = {};
+      res.data.contacts.forEach((user) => {
+        users[user._id] = user;
+      });
+      set({
+        allContacts: res.data.contacts,
+        users: {
+          ...get().users,
+          ...users,
+        },
+      });
     } catch (error) {
       console.error("Error fetching contacts:", error);
       toast.error(error.response?.data?.message || "Something went wrong");
@@ -121,7 +159,17 @@ export const useChatStore = create((set, get) => ({
     set({ isUsersLoading: true });
     try {
       const res = await axiosInstance.get("/messages/chats");
-      set({ chats: res.data.chatPartners });
+      const users = {};
+      res.data.chatPartners.forEach((user) => {
+        users[user._id] = user;
+      });
+      set({
+        chats: res.data.chatPartners,
+        users: {
+          ...get().users,
+          ...users,
+        },
+      });
     } catch (error) {
       console.error("Error fetching my chats:", error);
       toast.error(error.response?.data?.message || "Something went wrong");
@@ -276,36 +324,7 @@ export const useChatStore = create((set, get) => ({
     });
 
     socket.on("userUpdated", (updatedUser) => {
-      set((state) => ({
-        chats: state.chats.map((chat) =>
-          chat._id === updatedUser._id
-            ? {
-                ...chat,
-                fullName: updatedUser.fullName,
-                profilePicture: updatedUser.profilePicture,
-              }
-            : chat,
-        ),
-
-        allContacts: state.allContacts.map((contact) =>
-          contact._id === updatedUser._id
-            ? {
-                ...contact,
-                fullName: updatedUser.fullName,
-                profilePicture: updatedUser.profilePicture,
-              }
-            : contact,
-        ),
-
-        selectedUser:
-          state.selectedUser?._id === updatedUser._id
-            ? {
-                ...state.selectedUser,
-                fullName: updatedUser.fullName,
-                profilePicture: updatedUser.profilePicture,
-              }
-            : state.selectedUser,
-      }));
+      get().updateUserCache(updatedUser);
     });
   },
 
