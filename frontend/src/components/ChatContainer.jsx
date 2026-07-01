@@ -8,7 +8,6 @@ import { MessagesLoadingSkeleton } from "./SkeletonLoading";
 import { CheckCheckIcon, CheckIcon } from "lucide-react";
 
 const ChatContainer = () => {
-  console.log("ChatContainer Render");
   const {
     selectedUser,
     getMessagesByUserId,

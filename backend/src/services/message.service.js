@@ -41,6 +41,39 @@ class MessageService {
 
     return chatList;
   }
+
+  async getChatPreview(loggedInUserId, partnerId) {
+    const user = await User.findById(partnerId).select("-password");
+
+    if (!user) return null;
+
+    const lastMessage = await Message.findOne({
+      $or: [
+        {
+          senderId: loggedInUserId,
+          receiverId: partnerId,
+        },
+        {
+          senderId: partnerId,
+          receiverId: loggedInUserId,
+        },
+      ],
+    }).sort({ createdAt: -1 });
+
+    const unreadCount = await Message.countDocuments({
+      senderId: partnerId,
+      receiverId: loggedInUserId,
+      status: {
+        $in: ["sent", "delivered"],
+      },
+    });
+
+    return {
+      ...user.toObject(),
+      lastMessage,
+      unreadCount,
+    };
+  }
 }
 
 const messageService = new MessageService();

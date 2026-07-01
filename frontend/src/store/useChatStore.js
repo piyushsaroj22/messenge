@@ -70,6 +70,33 @@ export const useChatStore = create((set, get) => ({
     });
   },
 
+  addChatPartner: async (partnerId) => {
+    try {
+      const res = await axiosInstance.get(
+        `/messages/chat-preview/${partnerId}`,
+      );
+
+      const chat = res.data;
+
+      set((state) => {
+        // Already exists?
+        const exists = state.chats.some((item) => item._id === chat._id);
+
+        if (exists) return {};
+
+        return {
+          chats: [chat, ...state.chats],
+          users: {
+            ...state.users,
+            [chat._id]: chat,
+          },
+        };
+      });
+    } catch (error) {
+      console.error("Error adding chat partner:", error);
+    }
+  },
+
   upsertMessage: (message) => {
     set((state) => {
       const index = state.messages.findIndex(
@@ -228,6 +255,14 @@ export const useChatStore = create((set, get) => ({
         message: res.data.newMessage,
         unreadCountMode: "preserve",
       });
+
+      const partnerExists = get().chats.some(
+        (chat) => chat._id === selectedUser._id,
+      );
+
+      if (!partnerExists) {
+        await get().addChatPartner(selectedUser._id);
+      }
     } catch (error) {
       // Remove optimistic message
       set((state) => ({
@@ -273,6 +308,17 @@ export const useChatStore = create((set, get) => ({
         if (newMessage.senderId === selectedUser._id) {
           get().markMessagesAsSeen(newMessage.senderId);
         }
+      }
+
+      const partnerId =
+        newMessage.senderId === authUser._id
+          ? newMessage.receiverId
+          : newMessage.senderId;
+
+      const partnerExists = get().chats.some((chat) => chat._id === partnerId);
+
+      if (!partnerExists) {
+        get().addChatPartner(partnerId);
       }
 
       get().updateChatPreview({

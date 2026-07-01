@@ -5,6 +5,7 @@ import { arcjetMiddleware } from "../middlewares/arcjet.middleware.js";
 import {
   getAllContacts,
   getChatPartners,
+  getChatPreview,
   getMessageByUserId,
   sendMessage,
   markMessagesAsSeen,
@@ -17,6 +18,8 @@ messageRouter.use(arcjetMiddleware, protectRoute); // Apply this middleware to a
 messageRouter.get("/contacts", getAllContacts); // http://localhost:3000/api/messages/contacts
 
 messageRouter.get("/chats", getChatPartners); // http://localhost:3000/api/messages/chats
+
+messageRouter.get("/chat-preview/:id", getChatPreview); // http://localhost:3000/api/messages/chat-preview/:id
 
 messageRouter.get("/:id", getMessageByUserId); // http://localhost:3000/api/messages/:id
 

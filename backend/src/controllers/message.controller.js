@@ -30,6 +30,29 @@ export const getChatPartners = async (req, res) => {
   }
 };
 
+export const getChatPreview = async (req, res) => {
+  try {
+    const preview = await messageService.getChatPreview(
+      req.user._id,
+      req.params.id,
+    );
+
+    if (!preview) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json(preview);
+  } catch (error) {
+    console.error("Error fetching chat preview:", error);
+
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
+  }
+};
+
 export const getMessageByUserId = async (req, res) => {
   try {
     const myid = req.user._id;
