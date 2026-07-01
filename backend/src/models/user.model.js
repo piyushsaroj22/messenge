@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    about: {
+      type: String,
+      default: "Hey there! I am using Message.",
+    },
   },
   { timestamps: true }, // help to automatically add createdAt, updatedAt and last login.
 );

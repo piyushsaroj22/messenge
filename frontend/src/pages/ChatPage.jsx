@@ -35,7 +35,7 @@ function ChatPage() {
           <ProfileSearchBar />
           <ActiveTabSwitch />
 
-          <div className="flex-1 overflow-y-auto px-4 space-y-2 ">
+          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
             {activeTab === "chats" ? <ChatsList /> : <ContactList />}
           </div>
         </div>

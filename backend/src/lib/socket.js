@@ -83,3 +83,8 @@ io.on("connection", async (socket) => {
 });
 
 export { io, app, server };
+
+// todo :  User browser band kare → typing off
+//         User internet disconnect ho → typing off
+//         User logout kare → typing off
+//         User message bheje → typing off (ye hum pehle hi kar chuke hain) ✅

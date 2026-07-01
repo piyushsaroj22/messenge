@@ -4,6 +4,7 @@ import User from "../models/user.model.js";
 import { generateToken } from "../lib/utils.js";
 import cloudinary from "../lib/cloudinary.js";
 import bcrypt from "bcrypt";
+import { io } from "../lib/socket.js";
 
 export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -125,6 +126,13 @@ export const updateProfile = async (req, res) => {
       { profilePicture: uploadResponse.secure_url },
       { new: true },
     );
+
+    // 🔥 Realtime update
+    io.emit("userUpdated", {
+      _id: updatedUser._id.toString(),
+      fullName: updatedUser.fullName,
+      profilePicture: updatedUser.profilePicture,
+    });
 
     res.status(200).json({
       message: "Profile picture updated successfully",

@@ -10,48 +10,61 @@ const ContactList = () => {
     getAllContacts,
     allContacts,
     setSelectedUser,
+    selectedUser,
     isUsersLoading,
     searchQuery,
   } = useChatStore();
+
   const { onlineUsers } = useAuthStore();
 
   useEffect(() => {
     getAllContacts();
   }, [getAllContacts]);
 
-  const filteredChats = allContacts.filter(
-    (contact) =>
-      contact.fullName.toLowerCase().includes(searchQuery.toLowerCase()), // Agar me chahu to isko number se bhi search kar sakta hu, bas ye change karna hoga contact.fullName ke jagah contact.phoneNumber lekin me isme number ka input liya hi nahi hu userModel me
+  const filteredContacts = allContacts.filter((contact) =>
+    contact.fullName.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   if (isUsersLoading) return <UsersLoadingSkeleton />;
 
   return (
     <>
-      {filteredChats.length > 0 ? (
-        filteredChats.map((contact) => (
+      {filteredContacts.length > 0 ? (
+        filteredContacts.map((contact) => (
           <div
             key={contact._id}
-            className="p-4 cursor-pointer border-b border-slate-700/50"
+            className={`py-3 px-4 cursor-pointer border-b border-slate-700/50 rounded-xl transition-all duration-200
+            ${
+              selectedUser?._id === contact._id
+                ? "bg-cyan-500/15 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.15)]"
+                : "hover:bg-slate-800/50"
+            }`}
             onClick={() => setSelectedUser(contact)}
           >
             <div className="flex items-center gap-3">
               <div
-                className={`avatar ${onlineUsers.includes(contact._id) ? "avatar-online border-2 rounded-full border-green-500" : "avatar-offline border-2 rounded-full border-slate-700/50"}`}
+                className={`avatar ${
+                  onlineUsers.includes(contact._id)
+                    ? "avatar-online border-2 rounded-full border-green-500"
+                    : "avatar-offline border-2 rounded-full border-slate-700/50"
+                }`}
               >
                 <div className="size-12 rounded-full">
-                  <img src={contact.profilePicture || "/avatar.png"} />
+                  <img
+                    src={contact.profilePicture || "/avatar.png"}
+                    alt={contact.fullName}
+                  />
                 </div>
               </div>
-              <div className="flex flex-col">
-                <h4 className="text-slate-200 font-medium">
+
+              <div className="flex-1 min-w-0">
+                <h4 className="text-slate-200 font-medium text-lg truncate">
                   {contact.fullName}
                 </h4>
-                {/* <p
-                  className={`text-[12px] ${onlineUsers.includes(contact._id) ? "text-green-400" : "text-slate-400"}`}         ======================================================================baad me update karna hoga to karunga
-                >
-                  {onlineUsers.includes(contact._id) ? "Online" : "Offline"}
-                </p> */}
+
+                <p className="text-sm text-slate-400 truncate">
+                  {contact.about}
+                </p>
               </div>
             </div>
           </div>

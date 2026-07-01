@@ -11,10 +11,14 @@ const ChatsList = () => {
     chats,
     isUsersLoading,
     setSelectedUser,
+    selectedUser, // isko contactList me bhi dalna hai
+    typingUsers, // isko contactList me bhi dalna hai
     searchQuery,
-    typingUsers,
   } = useChatStore();
   const { onlineUsers } = useAuthStore();
+
+  const truncateText = (text, maxLength = 20) =>
+    text.length > maxLength ? `${text.slice(0, maxLength)}...` : text; // isko contactList me bhi dalna hai
 
   useEffect(() => {
     getMyChatPartners();
@@ -33,7 +37,12 @@ const ChatsList = () => {
         filteredChats.map((chat) => (
           <div
             key={chat._id}
-            className="p-3 cursor-pointer border-b border-slate-700/50 hover:bg-slate-800/50 transition-all duration-200 rounded-xl" // bg-cyan-500/5  hover:bg-cyan-500/20 transition-colors duration-200 ease-in-out
+            className={`py-3 px-4 cursor-pointer border-b border-slate-700/50 rounded-xl transition-all duration-200
+            ${
+              selectedUser?._id === chat._id
+                ? "bg-cyan-500/15 border border-cyan-500/40 shadow-[0_0_12px_rgba(6,182,212,0.15)]"
+                : "hover:bg-slate-800/50"
+            }`}
             onClick={() => setSelectedUser(chat)}
           >
             <div className="flex items-center gap-3">
@@ -50,12 +59,12 @@ const ChatsList = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-center">
+                  {" "}
                   <h4 className="text-slate-200 font-medium text-lg truncate">
                     {chat.fullName}
                   </h4>
-
                   {chat.lastMessage && (
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-[11px] text-slate-400 ">
                       {new Date(chat.lastMessage.createdAt).toLocaleTimeString(
                         [],
                         {
@@ -80,10 +89,9 @@ const ChatsList = () => {
                       : chat.lastMessage
                         ? chat.lastMessage.image
                           ? "📷 Photo"
-                          : chat.lastMessage.text
+                          : truncateText(chat.lastMessage.text, 20)
                         : "No messages yet"}
-                  </p>
-
+                  </p>{" "}
                   {chat.unreadCount > 0 && (
                     <div className="min-w-5 h-5 px-1 rounded-full bg-cyan-500 text-black text-[11px] font-bold flex items-center justify-center">
                       {chat.unreadCount}

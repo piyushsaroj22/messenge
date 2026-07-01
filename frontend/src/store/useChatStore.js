@@ -202,6 +202,7 @@ export const useChatStore = create((set, get) => ({
     socket.off("messagesSeen");
     socket.off("userTyping");
     socket.off("userStoppedTyping");
+    socket.off("userUpdated");
 
     socket.on("newMessage", (newMessage) => {
       get().setTypingUser(newMessage.senderId, false); // wese abhi iski jarurat nahi hia lekin thik hai
@@ -273,6 +274,39 @@ export const useChatStore = create((set, get) => ({
     socket.on("userStoppedTyping", ({ senderId }) => {
       get().setTypingUser(senderId, false);
     });
+
+    socket.on("userUpdated", (updatedUser) => {
+      set((state) => ({
+        chats: state.chats.map((chat) =>
+          chat._id === updatedUser._id
+            ? {
+                ...chat,
+                fullName: updatedUser.fullName,
+                profilePicture: updatedUser.profilePicture,
+              }
+            : chat,
+        ),
+
+        allContacts: state.allContacts.map((contact) =>
+          contact._id === updatedUser._id
+            ? {
+                ...contact,
+                fullName: updatedUser.fullName,
+                profilePicture: updatedUser.profilePicture,
+              }
+            : contact,
+        ),
+
+        selectedUser:
+          state.selectedUser?._id === updatedUser._id
+            ? {
+                ...state.selectedUser,
+                fullName: updatedUser.fullName,
+                profilePicture: updatedUser.profilePicture,
+              }
+            : state.selectedUser,
+      }));
+    });
   },
 
   unsubscribeFromMessages: () => {
@@ -282,6 +316,7 @@ export const useChatStore = create((set, get) => ({
     socket.off("messagesSeen");
     socket.off("userTyping");
     socket.off("userStoppedTyping");
+    socket.off("userUpdated");
   },
 
   setSearchQuery: (query) => {
