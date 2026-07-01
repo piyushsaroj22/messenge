@@ -204,6 +204,7 @@ export const useChatStore = create((set, get) => ({
     socket.off("userStoppedTyping");
 
     socket.on("newMessage", (newMessage) => {
+      get().setTypingUser(newMessage.senderId, false); // wese abhi iski jarurat nahi hia lekin thik hai
       const { selectedUser, isSoundEnabled } = get();
 
       const { authUser } = useAuthStore.getState();
@@ -216,6 +217,8 @@ export const useChatStore = create((set, get) => ({
             newMessage.receiverId === selectedUser._id));
 
       if (isCurrentChat) {
+        // Message aa gaya matlab sender ab type nahi kar raha and Stop typing indicator immediately
+        get().setTypingUser(newMessage.senderId, false);
         get().upsertMessage(newMessage);
 
         if (newMessage.senderId === selectedUser._id) {

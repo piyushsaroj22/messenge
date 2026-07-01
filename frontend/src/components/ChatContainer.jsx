@@ -33,7 +33,7 @@ const ChatContainer = () => {
   return (
     <>
       <ChatHeader />
-      <div className="flex-1 px-6 overflow-y-auto py-8">
+      <div className="flex-1 px-6 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
         {messages.length > 0 && !isMessagesLoading ? (
           <div className="max-w-3xl mx-auto space-y-1">
             {messages.map((msg) => (
@@ -42,7 +42,7 @@ const ChatContainer = () => {
                 className={`chat ${msg.senderId === authUser._id ? "chat-end" : "chat-start"}`}
               >
                 <div
-                  className={`chat-bubble  relative wrap-break-word overflow-wrap-anywhere ${
+                  className={`chat-bubble relative wrap-break-word overflow-wrap-anywhere  ${
                     msg.senderId === authUser._id
                       ? "bg-cyan-600 text-white rounded-t-2xl rounded-l-2xl pt-0 border border-cyan-700/50 font-medium"
                       : "bg-slate-800 text-slate-200 rounded-t-2xl rounded-r-2xl pt-0 border border-slate-700/50 font-medium"
@@ -56,15 +56,21 @@ const ChatContainer = () => {
                     />
                   )}
                   {msg.text && <p className="mt-2">{msg.text}</p>}
-                  <div className="flex items-center justify-between">
-                    <p
-                      className={`text-[0.70rem] mt-1 opacity-75 flex items-center gap-1 ${msg.senderId === authUser._id ? "justify-end" : "justify-start"}`}
-                    >
-                      {new Date(msg.createdAt).toLocaleTimeString(undefined, {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
+                  <div
+                    className={`mt-1 flex items-center gap-1 ${
+                      msg.senderId === authUser._id
+                        ? "justify-end"
+                        : "justify-start"
+                    }`}
+                  >
+                    <span className="text-[0.70rem] opacity-75">
+                      {msg.createdAt &&
+                        new Date(msg.createdAt).toLocaleTimeString("en-IN", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                    </span>
+
                     {msg.senderId === authUser._id && (
                       <>
                         {msg.status === "sent" && (
@@ -92,13 +98,13 @@ const ChatContainer = () => {
               <div className="chat chat-start">
                 <div className="chat-bubble bg-slate-800 border border-slate-700 rounded-t-2xl rounded-r-2xl px-4 py-3">
                   <div className="flex items-center gap-1 mt-1">
-                    <span className="w-2 h-2 bg-slate-300 rounded-full animate-bounce"></span>
+                    <span className="w-1 h-1 bg-slate-300 rounded-full animate-typing-bounce"></span>
                     <span
-                      className="w-2 h-2 bg-slate-300 rounded-full animate-bounce"
+                      className="w-1 h-1 bg-slate-300 rounded-full animate-typing-bounce"
                       style={{ animationDelay: "0.15s" }}
                     ></span>
                     <span
-                      className="w-2 h-2 bg-slate-300 rounded-full animate-bounce"
+                      className="w-1 h-1 bg-slate-300 rounded-full animate-typing-bounce"
                       style={{ animationDelay: "0.3s" }}
                     ></span>
                   </div>
