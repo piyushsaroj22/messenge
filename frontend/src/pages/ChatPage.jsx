@@ -27,21 +27,25 @@ function ChatPage() {
   }, [subscribeToMessages, unsubscribeFromMessages]);
 
   return (
-    <div className="relative w-full max-w-6xl h-200 z-2 items-center justify-center">
+    <div className="relative w-full h-[calc(100dvh-2rem)] max-w-6xl min-h-0 z-2">
       <BorderAnimatedContainer>
         {/* LEFT SIDE */}
-        <div className="w-full md:w-1/3 flex flex-col ">
+        <div
+          className={`w-full md:w-[360px] md:min-w-[320px] flex-col min-h-0 border-slate-700/50 ${selectedUser ? "hidden md:flex" : "flex"} md:border-r`}
+        >
           <ProfileHeader />
           <ProfileSearchBar />
           <ActiveTabSwitch />
 
-          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
+          <div className="flex-1 min-h-0 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
             {activeTab === "chats" ? <ChatsList /> : <ContactList />}
           </div>
         </div>
 
         {/* RIGHT SIDE */}
-        <div className="flex-1 flex flex-col bg-slate-900/80 border-l border-slate-700/50">
+        <div
+          className={`flex-1 min-w-0 min-h-0 flex-col bg-slate-900/80 ${selectedUser ? "flex" : "hidden md:flex"}`}
+        >
           {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
         </div>
       </BorderAnimatedContainer>

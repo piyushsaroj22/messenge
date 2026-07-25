@@ -27,13 +27,13 @@ const ProfileHeader = () => {
   };
 
   return (
-    <div className="py-3 px-4 border-b border-slate-700/50">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+    <div className="py-3 px-4 border-b border-slate-700/50 shrink-0">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           {/* AVATAR */}
           <div className="avatar avatar-online">
             <button
-              className="size-14 rounded-full overflow-hidden relative group"
+              className="size-12 sm:size-14 rounded-full overflow-hidden relative group"
               onClick={() => {
                 if (!isUpdatingProfile) fileInputRef.current.click();
               }}
@@ -68,8 +68,8 @@ const ProfileHeader = () => {
           </div>
 
           {/* USERNAME & ONLINE TEXT */}
-          <div>
-            <h3 className="text-slate-200 font-medium text-xl max-w-[180px] truncate">
+          <div className="min-w-0">
+            <h3 className="text-slate-200 font-medium text-lg sm:text-xl max-w-[180px] truncate">
               {authUser.fullName}
             </h3>
 
@@ -78,7 +78,7 @@ const ProfileHeader = () => {
         </div>
 
         {/* BUTTONS */}
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-3 sm:gap-4 items-center shrink-0">
           {/* LOGOUT BTN */}
           <button
             className="text-slate-400 hover:text-slate-200 transition-colors"

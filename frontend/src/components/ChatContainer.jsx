@@ -33,9 +33,9 @@ const ChatContainer = () => {
   return (
     <>
       <ChatHeader />
-      <div className="flex-1 px-6 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
+      <div className="flex-1 min-h-0 px-4 sm:px-6 overflow-y-auto py-4 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
         {messages.length > 0 && !isMessagesLoading ? (
-          <div className="max-w-3xl mx-auto space-y-1">
+          <div className="max-w-3xl mx-auto space-y-1 pb-2">
             {messages.map((msg) => (
               <div
                 key={msg._id}
@@ -52,7 +52,7 @@ const ChatContainer = () => {
                     <img
                       src={msg.image}
                       alt="Shared"
-                      className="w-full h-84 mt-3 object-cover rounded-lg"
+                      className="w-full max-h-72 sm:max-h-84 mt-3 object-cover rounded-lg"
                     />
                   )}
                   {msg.text && <p className="mt-2">{msg.text}</p>}
