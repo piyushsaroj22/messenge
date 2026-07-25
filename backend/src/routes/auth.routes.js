@@ -22,6 +22,6 @@ authRouter.put("/update-profile", protectRoute, updateProfile); // http://localh
 
 authRouter.get("/check", protectRoute, (req, res) =>
   res.status(200).json(req.user),
-); // http://localhost:3000/api/auth/check
+);
 
 export default authRouter;
