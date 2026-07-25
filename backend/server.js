@@ -3,6 +3,12 @@ import config from "./src/config/config.js";
 import connectDB from "./src/lib/db.js";
 import { server } from "./src/lib/socket.js";
 
+console.log("PORT =", process.env.PORT);
+console.log("NODE_ENV =", process.env.NODE_ENV);
+console.log("MONGO =", !!process.env.MONGO_URI);
+console.log("JWT =", !!process.env.JWT_SECRET);
+console.log("CLIENT_URL =", process.env.CLIENT_URL);
+
 const PORT = config.PORT;
 connectDB();
 
