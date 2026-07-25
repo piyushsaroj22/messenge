@@ -24,9 +24,9 @@
 
 import axios from "axios";
 
-const hostname = window.location.hostname;
+// const hostname = window.location.hostname;
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || `http://${hostname}:3000`;
+const SERVER_URL = import.meta.env.VITE_SERVER_URL; // || `http://${hostname}:3000`;
 
 export const axiosInstance = axios.create({
   baseURL: `${SERVER_URL}/api`,
