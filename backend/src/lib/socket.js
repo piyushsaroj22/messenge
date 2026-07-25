@@ -10,7 +10,7 @@ import Message from "../models/message.model.js";
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { credentials: true, origin: [config.CLIENT_URL, config.CLIENT_URL_2] },
+  cors: { credentials: true, origin: [config.CLIENT_URL] }, //config.CLIENT_URL || http://localhost:5173
 });
 
 // apply authentication middleware to all socket connections
