@@ -9,9 +9,7 @@ import cors from "cors";
 const app = express();
 
 app.use(express.json({ limit: "5mb" }));
-app.use(
-  cors({ origin: [config.CLIENT_URL, config.CLIENT_URL_2], credentials: true }),
-);
+app.use(cors({ origin: [config.CLIENT_URL], credentials: true }));
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
