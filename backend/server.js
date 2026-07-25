@@ -9,3 +9,8 @@ connectDB();
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT} (${config.NODE_ENV})`);
 });
+
+// If you want to run the app without socket.io, you can uncomment the following lines and comment out the server.listen() line above.
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT} (${config.NODE_ENV})`);
+// });
