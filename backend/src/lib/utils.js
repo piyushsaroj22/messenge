@@ -7,10 +7,10 @@ export const generateToken = (userId, res) => {
   });
 
   res.cookie("token", token, {
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    httpOnly: true, //prevent XSS attacks:cross-site scripting attacks
-    sameSite: "strict", // crff protection
-    secure: config.NODE_ENV === "development" ? false : true, // set to true in production
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
   });
   return token;
 };
