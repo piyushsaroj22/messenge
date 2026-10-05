@@ -9,7 +9,7 @@ const ContactList = () => {
   const {
     getAllContacts,
     allContacts,
-    users, // ⭐ NEW
+    users,
     setSelectedUser,
     selectedUser,
     isUsersLoading,
